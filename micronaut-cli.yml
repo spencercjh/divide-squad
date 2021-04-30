@@ -1,0 +1,6 @@
+applicationType: cli
+defaultPackage: com.spencercjh
+testFramework: junit
+sourceLanguage: java
+buildTool: gradle
+features: [ annotation-api, app-name, data, data-jpa, gradle, h2, hibernate-validator, java, jdbc-hikari, junit, log4j2, mockito, picocli, picocli-java-application, picocli-junit, readme, shade, yaml ]
