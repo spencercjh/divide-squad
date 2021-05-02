@@ -14,10 +14,11 @@ import javax.validation.constraints.NotNull;
 /**
  * @author spencercjh
  */
+@Builder
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Accessors(chain = true)
-@Builder
 public class Player {
   @NotBlank
   private String name;
@@ -41,4 +42,8 @@ public class Player {
   @Min(value = 0L)
   @NotNull
   private int goalkeeperStats;
+  /**
+   * sum of stats / non-zero item count
+   */
+  private double overallStats;
 }

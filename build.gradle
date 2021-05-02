@@ -57,5 +57,25 @@ java {
     targetCompatibility = JavaVersion.toVersion("8")
 }
 
-
+// reference: https://github.com/remkop/picocli/blob/5ee80a3ff1bc1d3ac0e326a6be8a1b8c06b9f50b/picocli-examples/build.gradle#L51
+def generatedResources = "$buildDir/generated-resources/main"
+sourceSets {
+    main {
+        //register an output folder on the main SourceSet:
+        output.dir(generatedResources, builtBy: 'generateVersionTxt')
+        //it is now a part of the 'main' classpath and will be a part of the jar
+    }
+}
+task generateVersionTxt {
+    description 'Creates a version.txt file with build info that is added to the root of the picocli-examples jar'
+    doLast {
+        new File(generatedResources).mkdirs()
+        def generated = new File(generatedResources, "version.txt")
+        generated.text = """
+Version: $rootProject.version
+Buildtime: ${new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())}
+Application-name: $rootProject.name $project.name
+"""
+    }
+}
 
