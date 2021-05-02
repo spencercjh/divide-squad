@@ -1,7 +1,8 @@
-package com.spencercjh.algorithm;
+package com.spencercjh.algorithm.impl;
 
-import com.spencercjh.Player;
-import com.spencercjh.Position;
+import com.spencercjh.model.Player;
+import com.spencercjh.model.Position;
+import com.spencercjh.algorithm.DivideAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Named;
@@ -32,39 +33,37 @@ public class EquallyDivideAlgorithm implements DivideAlgorithm {
     int sum = 0;
     for (int i = 1; i < squadPlayers.length; i++) {
       final Player player = players.get(i - 1);
-      squadPlayers[i] = new SquadPlayer();
-      squadPlayers[i].number = i;
-      squadPlayers[i].stats = getStats(player, position);
-      sum += squadPlayers[i].stats;
+      squadPlayers[i] = new SquadPlayer(i, getStats(player, position), false);
+      sum += squadPlayers[i].getStats();
     }
     final int average = sum / 2;
     final int[][] dp = new int[n + 1][MAX_STATS_SUM + 1];
     for (int i = 1; i <= n; i++) {
       for (int j = 1; j <= average; j++) {
         dp[i][j] = dp[i - 1][j];
-        if (squadPlayers[i].stats <= j) {
-          dp[i][j] = Math.max(dp[i][j], dp[i - 1][j - squadPlayers[i].stats] + squadPlayers[i].stats);
+        if (squadPlayers[i].getStats() <= j) {
+          dp[i][j] = Math.max(dp[i][j], dp[i - 1][j - squadPlayers[i].getStats()] + squadPlayers[i].getStats());
         }
       }
     }
     int remainSpace = average;
     for (int i = n; i >= 1; i--) {
-      if (remainSpace >= squadPlayers[i].stats) {
-        if ((dp[i][remainSpace] - dp[i - 1][remainSpace - squadPlayers[i].stats]) == squadPlayers[i].stats) {
-          squadPlayers[i].team = true;
-          remainSpace = remainSpace - squadPlayers[i].stats;
+      if (remainSpace >= squadPlayers[i].getStats()) {
+        if ((dp[i][remainSpace] - dp[i - 1][remainSpace - squadPlayers[i].getStats()]) == squadPlayers[i].getStats()) {
+          squadPlayers[i].setAlpha(true);
+          remainSpace = remainSpace - squadPlayers[i].getStats();
         }
       }
     }
 
-    final PriorityQueue<SquadPlayer> alpha = new PriorityQueue<>(Comparator.comparingInt(o -> o.stats));
-    final PriorityQueue<SquadPlayer> bravo = new PriorityQueue<>(Comparator.comparingInt(o -> o.stats));
+    final PriorityQueue<SquadPlayer> alpha = new PriorityQueue<>(Comparator.comparingInt(o -> o.getStats()));
+    final PriorityQueue<SquadPlayer> bravo = new PriorityQueue<>(Comparator.comparingInt(o -> o.getStats()));
 
     for (SquadPlayer squadPlayer : squadPlayers) {
       if (squadPlayer == null) {
         continue;
       }
-      if (squadPlayer.team) {
+      if (squadPlayer.isAlpha()) {
         alpha.offer(squadPlayer);
       } else {
         bravo.offer(squadPlayer);
@@ -86,10 +85,18 @@ public class EquallyDivideAlgorithm implements DivideAlgorithm {
       }
     }
     final List<List<Player>> answer = new ArrayList<>(2);
-    answer.add(alpha.stream().map(squadPlayer -> players.get(squadPlayer.number - 1)).collect(Collectors.toList()));
-    log.info("The total {} stats of team A: {}", position, alpha.stream().map(player -> player.stats).mapToInt(Integer::intValue).sum());
-    answer.add(bravo.stream().map(squadPlayer -> players.get(squadPlayer.number - 1)).collect(Collectors.toList()));
-    log.info("The total {} stats of team B: {}", position, bravo.stream().map(player -> player.stats).mapToInt(Integer::intValue).sum());
+    answer.add(alpha.stream().map(squadPlayer -> players.get(squadPlayer.getNumber() - 1))
+      .collect(Collectors.toList()));
+    log.debug("The total {} stats of team A: {}", position, alpha.stream()
+      .map(SquadPlayer::getStats)
+      .mapToInt(Integer::intValue)
+      .sum());
+    answer.add(bravo.stream().map(squadPlayer -> players.get(squadPlayer.getNumber() - 1))
+      .collect(Collectors.toList()));
+    log.debug("The total {} stats of team B: {}", position, bravo.stream()
+      .map(SquadPlayer::getStats)
+      .mapToInt(Integer::intValue)
+      .sum());
     return answer;
   }
 }

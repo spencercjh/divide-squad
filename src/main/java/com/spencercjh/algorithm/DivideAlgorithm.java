@@ -1,7 +1,9 @@
 package com.spencercjh.algorithm;
 
-import com.spencercjh.Player;
-import com.spencercjh.Position;
+import com.spencercjh.model.Player;
+import com.spencercjh.model.Position;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 import java.util.List;
 
@@ -42,6 +44,8 @@ public interface DivideAlgorithm {
    */
   List<List<Player>> divide(List<Player> players, Position position);
 
+  @Data
+  @AllArgsConstructor
   class SquadPlayer {
     /**
      * begin from 1
@@ -51,7 +55,7 @@ public interface DivideAlgorithm {
     /**
      * alpha true, beta false
      */
-    boolean team = false;
+    boolean alpha;
   }
 
 }

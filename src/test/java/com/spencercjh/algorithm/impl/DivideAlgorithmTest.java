@@ -1,17 +1,24 @@
-package com.spencercjh;
+package com.spencercjh.algorithm.impl;
 
-import com.spencercjh.algorithm.EquallyDivideAlgorithm;
+import com.spencercjh.model.Player;
+import com.spencercjh.model.Position;
+import com.spencercjh.algorithm.DivideAlgorithm;
+import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import org.junit.jupiter.api.Test;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class AlgorithmTest {
+@MicronautTest
+class DivideAlgorithmTest {
+  @Inject
+  private DivideAlgorithm divideAlgorithm;
+
   @Test
-  void bagAlgorithm() {
-    EquallyDivideAlgorithm algorithm = new EquallyDivideAlgorithm();
+  void divide() {
     List<Player> players = new ArrayList<>();
     players.add(Player.builder()
       .name("球员A")
@@ -49,8 +56,7 @@ public class AlgorithmTest {
       .name("球员I")
       .strikerStats(1)
       .build());
-    final List<java.util.List<Player>> result = algorithm.divide(players,
-      Position.STRIKER);
+    final List<java.util.List<Player>> result = divideAlgorithm.divide(players, Position.STRIKER);
     System.out.println("A");
     result.get(0).forEach(System.out::println);
     System.out.println("B");

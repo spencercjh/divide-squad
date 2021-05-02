@@ -1,4 +1,4 @@
-package com.spencercjh;
+package com.spencercjh.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -46,4 +46,17 @@ public class Player {
    * sum of stats / non-zero item count
    */
   private double overallStats;
+
+  public Position position() {
+    int[] stats = new int[]{strikerStats, middleFieldStats, sideStats, halfbackStats, goalkeeperStats};
+    int max = Integer.MIN_VALUE;
+    int ans = -1;
+    for (int i = 0; i < stats.length; i++) {
+      if (stats[i] > max) {
+        max = stats[i];
+        ans = i;
+      }
+    }
+    return Position.values()[ans];
+  }
 }
