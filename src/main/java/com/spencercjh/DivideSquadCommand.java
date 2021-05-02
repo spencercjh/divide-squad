@@ -3,8 +3,8 @@ package com.spencercjh;
 import com.spencercjh.model.Player;
 import com.spencercjh.model.SquadListResult;
 import com.spencercjh.model.SquadSetResult;
-import com.spencercjh.service.SquadService;
 import com.spencercjh.service.PoiService;
+import com.spencercjh.service.SquadService;
 import io.micronaut.configuration.picocli.PicocliRunner;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ import java.util.Properties;
  * @author spencercjh
  */
 @Command(name = "divide-squad",
-  description = "divide squad cli app",
+  description = "For more detail: https://github.com/spencercjh/divide-squad",
   mixinStandardHelpOptions = true,
   versionProvider = DivideSquadCommand.PropertiesVersionProvider.class,
   header = {
@@ -45,7 +45,7 @@ public class DivideSquadCommand implements Runnable {
   private String filePath;
 
   @SuppressWarnings("unused")
-  @Option(names = {"-s", "--sheet"}, description = "Sheet Index (begin from 0)", defaultValue = "0")
+  @Option(names = {"-s", "--sheet"}, description = "Sheet Index (begin from 0, default value is 0)", defaultValue = "0")
   private Integer sheetIndex;
 
   public static void main(String[] args) {

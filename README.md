@@ -1,21 +1,26 @@
-## Micronaut 2.5.0 Documentation
+# 分队小程序
 
-- [User Guide](https://docs.micronaut.io/2.5.0/guide/index.html)
-- [API Reference](https://docs.micronaut.io/2.5.0/api/index.html)
-- [Configuration Reference](https://docs.micronaut.io/2.5.0/guide/configurationreference.html)
-- [Micronaut Guides](https://guides.micronaut.io/index.html)
+## 使用方法
 
----
+**请准备好 JRE Java8+ 环境**
 
-## Feature hibernate-validator documentation
+1. 准备数据，参考过往 Excel 文件；
+2. 下载release中的jar包（或者从源码build jar包），执行1命令，注意观察控制台。
 
-- [Micronaut Hibernate Validator documentation](https://micronaut-projects.github.io/micronaut-hibernate-validator/latest/guide/index.html)
+```shell
+# 1
+java -jar divide-squad-<version>-all.jar [-hV] -f=<ExcelFilePath> [-s=<SheetIndex>]
+# 2 UNIX系统
+chmod +x ./gradlew
+gradlew build
+# 3 Windows系统
+./gradlew.bat build
+```
 
-## Feature mockito documentation
+## 已知且很难解决的问题
 
-- [https://site.mockito.org](https://site.mockito.org)
-
-## Feature jdbc-hikari documentation
-
-- [Micronaut Hikari JDBC Connection Pool documentation](https://micronaut-projects.github.io/micronaut-sql/latest/guide/index.html#jdbc)
-
+1. 没有类似于游戏匹配机制那样的随机性：同样的一拨人，分出来的队伍永远是一样的，除非人员、能力值上有变动；
+2. 对每一位球员只能在一个位置（前锋、中场、边路、中位、门将）上进行分配；
+3. 没有更多的数据维度去评价一个球员，仅仅只有一个数字；
+4. 分配上只讲平均策略，没有任何权重的概念；
+5. 封装到一个微信小程序中去供更多的人快捷使用。

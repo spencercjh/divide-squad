@@ -1,10 +1,12 @@
+import java.text.SimpleDateFormat
+
 plugins {
     id("com.github.johnrengelman.shadow") version "6.1.0"
     id("io.micronaut.application") version "1.5.0"
     id "com.adarshr.test-logger" version "3.0.0"
 }
 
-version = "0.2"
+version = "1.0"
 group = "com.spencercjh"
 
 repositories {
@@ -69,7 +71,7 @@ task generateVersionTxt {
         def generated = new File(generatedResources, "version.txt")
         generated.text = """
 Version: $rootProject.version
-Buildtime: ${new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())}
+Buildtime: ${new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())}
 Application-name: $rootProject.name $project.name
 """
     }
