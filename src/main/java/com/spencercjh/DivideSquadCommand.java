@@ -22,7 +22,7 @@ import java.util.Properties;
  * @author spencercjh
  */
 @Command(name = "divide-squad",
-  description = "For more detail: https://github.com/spencercjh/divide-squad",
+  description = "For more detail: https://github.com/spencercjh/divide-squad. Please prepare the excel file before dividing.",
   mixinStandardHelpOptions = true,
   versionProvider = DivideSquadCommand.PropertiesVersionProvider.class,
   header = {
