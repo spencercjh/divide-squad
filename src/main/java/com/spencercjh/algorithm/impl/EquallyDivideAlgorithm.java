@@ -1,17 +1,13 @@
 package com.spencercjh.algorithm.impl;
 
+import com.spencercjh.algorithm.BaseDivideAlgorithm;
 import com.spencercjh.model.Player;
 import com.spencercjh.model.Position;
-import com.spencercjh.algorithm.DivideAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.PriorityQueue;
-import java.util.stream.Collectors;
+import java.util.*;
 
 import static com.spencercjh.algorithm.DivideAlgorithm.getStats;
 
@@ -23,7 +19,7 @@ import static com.spencercjh.algorithm.DivideAlgorithm.getStats;
 @Singleton
 @Named("EquallyDivide")
 @Slf4j
-public class EquallyDivideAlgorithm implements DivideAlgorithm {
+public class EquallyDivideAlgorithm extends BaseDivideAlgorithm {
   private static final int MAX_STATS_SUM = 1000;
 
   @Override
@@ -56,8 +52,8 @@ public class EquallyDivideAlgorithm implements DivideAlgorithm {
       }
     }
 
-    final PriorityQueue<SquadPlayer> alpha = new PriorityQueue<>(Comparator.comparingInt(o -> o.getStats()));
-    final PriorityQueue<SquadPlayer> bravo = new PriorityQueue<>(Comparator.comparingInt(o -> o.getStats()));
+    final PriorityQueue<SquadPlayer> alpha = new PriorityQueue<>(Comparator.comparingInt(SquadPlayer::getStats));
+    final PriorityQueue<SquadPlayer> bravo = new PriorityQueue<>(Comparator.comparingInt(SquadPlayer::getStats));
 
     for (SquadPlayer squadPlayer : squadPlayers) {
       if (squadPlayer == null) {
@@ -84,19 +80,62 @@ public class EquallyDivideAlgorithm implements DivideAlgorithm {
         countB--;
       }
     }
-    final List<List<Player>> answer = new ArrayList<>(2);
-    answer.add(alpha.stream().map(squadPlayer -> players.get(squadPlayer.getNumber() - 1))
-      .collect(Collectors.toList()));
-    log.debug("The total {} stats of team A: {}", position, alpha.stream()
-      .map(SquadPlayer::getStats)
-      .mapToInt(Integer::intValue)
-      .sum());
-    answer.add(bravo.stream().map(squadPlayer -> players.get(squadPlayer.getNumber() - 1))
-      .collect(Collectors.toList()));
-    log.debug("The total {} stats of team B: {}", position, bravo.stream()
-      .map(SquadPlayer::getStats)
-      .mapToInt(Integer::intValue)
-      .sum());
-    return answer;
+    final List<List<SquadPlayer>> shuffleResult = shuffle(new ArrayList<>(alpha), new ArrayList<>(bravo),
+      position);
+    return mapSquadPlayerToPlayer(players, position, shuffleResult.get(0), shuffleResult.get(1));
+  }
+
+  @Override
+  protected List<List<SquadPlayer>> shuffle(List<SquadPlayer> alpha, List<SquadPlayer> bravo, Position position) {
+    final Map<Integer, List<SquadPlayer>> alphaStatsPlayersMap = new HashMap<>();
+    for (SquadPlayer squadPlayer : alpha) {
+      final List<SquadPlayer> playersWithSpecialStats = alphaStatsPlayersMap.getOrDefault(squadPlayer.getStats(), new ArrayList<>());
+      playersWithSpecialStats.add(squadPlayer);
+      alphaStatsPlayersMap.put(squadPlayer.getStats(), playersWithSpecialStats);
+    }
+    final Map<Integer, List<SquadPlayer>> bravoStatsPlayersMap = new HashMap<>();
+    final Map<Integer, Boolean> isBravoPlayersVisited = new HashMap<>();
+    for (SquadPlayer squadPlayer : bravo) {
+      final List<SquadPlayer> playersWithSpecialStats = bravoStatsPlayersMap.getOrDefault(squadPlayer.getStats(), new ArrayList<>());
+      playersWithSpecialStats.add(squadPlayer);
+      bravoStatsPlayersMap.put(squadPlayer.getStats(), playersWithSpecialStats);
+      isBravoPlayersVisited.put(squadPlayer.getStats(), false);
+    }
+    final List<List<SquadPlayer>> allSquadPlayers = new ArrayList<>();
+    final List<SquadPlayer> newAlpha = new ArrayList<>();
+    allSquadPlayers.add(newAlpha);
+    final List<SquadPlayer> newBravo = new ArrayList<>();
+    allSquadPlayers.add(newBravo);
+    for (Map.Entry<Integer, List<SquadPlayer>> entry : alphaStatsPlayersMap.entrySet()) {
+      isBravoPlayersVisited.put(entry.getKey(), true);
+      final int alphaSquadPlayersWithSpecialStatsCount = entry.getValue().size();
+      final List<SquadPlayer> bravoSquadPlayersWithSpecialStats = bravoStatsPlayersMap.getOrDefault(entry.getKey(), new ArrayList<>());
+      final int bravoSquadPlayersWithSpecialStatsCount = bravoSquadPlayersWithSpecialStats.size();
+      if (bravoSquadPlayersWithSpecialStatsCount != alphaSquadPlayersWithSpecialStatsCount) {
+        newAlpha.addAll(entry.getValue());
+        newBravo.addAll(bravoSquadPlayersWithSpecialStats);
+        log.debug("The amount of two squad players with {} stats isn't same, can't shuffle", entry.getKey());
+        continue;
+      }
+      log.debug("During dividing Position: {}, there are {} × 2 players' stats: {} that are same. They can be shuffled", position,
+        alphaSquadPlayersWithSpecialStatsCount, entry.getKey());
+      final List<SquadPlayer> toShufflePlayers = new ArrayList<>(entry.getValue());
+      toShufflePlayers.addAll(bravoSquadPlayersWithSpecialStats);
+      Collections.shuffle(toShufflePlayers);
+      for (int i = 0; i < toShufflePlayers.size(); i++) {
+        final SquadPlayer toShuffle = toShufflePlayers.get(i);
+        if (i < toShufflePlayers.size() / 2) {
+          newAlpha.add(toShuffle.setAlpha(true));
+        } else {
+          newBravo.add(toShuffle.setAlpha(false));
+        }
+      }
+    }
+    for (Map.Entry<Integer, Boolean> entry : isBravoPlayersVisited.entrySet()) {
+      if (!entry.getValue()) {
+        newBravo.addAll(bravoStatsPlayersMap.get(entry.getKey()));
+      }
+    }
+    return allSquadPlayers;
   }
 }
