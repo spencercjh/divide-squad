@@ -38,24 +38,12 @@ public interface DivideAlgorithm {
   }
 
   /**
+   * divide one list of players to two list
+   *
    * @param players  player list
    * @param position position enum
    * @return two list. 0th is alpha, 1st is beta
    */
   List<List<Player>> divide(List<Player> players, Position position);
-
-  @Data
-  @AllArgsConstructor
-  class SquadPlayer {
-    /**
-     * begin from 1
-     */
-    int number;
-    int stats;
-    /**
-     * alpha true, beta false
-     */
-    boolean alpha;
-  }
 
 }
