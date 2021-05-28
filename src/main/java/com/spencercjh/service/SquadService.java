@@ -1,10 +1,12 @@
 package com.spencercjh.service;
 
 import com.google.common.collect.Lists;
+import com.spencercjh.algorithm.BaseDivideAlgorithm;
 import com.spencercjh.algorithm.DivideAlgorithm;
 import com.spencercjh.model.Player;
 import com.spencercjh.model.Position;
 import com.spencercjh.model.SquadSetResult;
+import io.micronaut.context.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
@@ -22,10 +24,13 @@ public class SquadService {
   @Inject
   private DivideAlgorithm divideAlgorithm;
 
-  public SquadSetResult divideSquad(List<Player> allPlayers, List<List<Player>> playersInDifferentPositions) {
+  public SquadSetResult divideSquad(List<Player> allPlayers, List<List<Player>> playersInDifferentPositions,
+                                    boolean needLossCompensation) {
     final SquadSetResult squadSetResult = new SquadSetResult();
     final Set<Player> alphaSet = squadSetResult.getAlphaSet();
     final Set<Player> bravoSet = squadSetResult.getBravoSet();
+    // =0 means equal stats, <0 means stats of alpha is bigger, >0 means stats of bravo is bigger
+    double deviation = 0;
     // remove the last overall
     for (int i = 0; i < Position.values().length - 1; i++) {
       final List<Player> playersInDifferentPosition = playersInDifferentPositions.get(i);
@@ -35,7 +40,34 @@ public class SquadService {
       }
       final Position position = Position.values()[i];
       final List<List<Player>> dividedPlayers = divideAlgorithm.divide(playersInDifferentPosition, position);
-      boolean result = alphaSet.addAll(dividedPlayers.get(0)) && bravoSet.addAll(dividedPlayers.get(1));
+      double statsA = BaseDivideAlgorithm.getTotalStatsOfOneSquad(dividedPlayers.get(0));
+      double statsB = BaseDivideAlgorithm.getTotalStatsOfOneSquad(dividedPlayers.get(1));
+      boolean result = false;
+      if (!needLossCompensation) {
+        result = alphaSet.addAll(dividedPlayers.get(0)) && bravoSet.addAll(dividedPlayers.get(1));
+      } else {
+        // In the last position comparison, there is no difference between two team
+        if (deviation == 0) {
+          result = alphaSet.addAll(dividedPlayers.get(0)) && bravoSet.addAll(dividedPlayers.get(1));
+        }
+        // In the last position comparison, the Bravo team is stronger, assign stronger players to alpha team
+        else if (deviation > 0) {
+          if (statsA > statsB) {
+            result = alphaSet.addAll(dividedPlayers.get(0)) && bravoSet.addAll(dividedPlayers.get(1));
+          } else {
+            result = alphaSet.addAll(dividedPlayers.get(1)) && bravoSet.addAll(dividedPlayers.get(0));
+          }
+        }
+        // In the last position comparison, the Alpha team is stronger, assign stronger players to Bravo team
+        else if (deviation < 0) {
+          if (statsA > statsB) {
+            result = alphaSet.addAll(dividedPlayers.get(1)) && bravoSet.addAll(dividedPlayers.get(0));
+          } else {
+            result = alphaSet.addAll(dividedPlayers.get(0)) && bravoSet.addAll(dividedPlayers.get(1));
+          }
+        }
+        deviation = (statsA - statsB) * -1.0;
+      }
       if (!result) {
         log.error("Failed when dividing {}", position);
         throw new RuntimeException();

@@ -61,6 +61,9 @@ public class PoiService {
   }
 
   Player extractPlayerFromRow(Row row) {
+    if (row == null) {
+      return null;
+    }
     try {
       final int strikerStats = (int) row.getCell(STRIKER_STATS.getIndex()).getNumericCellValue();
       final int middleFieldStats = (int) row.getCell(MIDDLE_FIELD_STATS.getIndex()).getNumericCellValue();
@@ -87,8 +90,11 @@ public class PoiService {
     final Sheet sheet = readSheet(filePath, sheetIndex);
     final List<Player> allPlayers = new ArrayList<>();
     // skip header
-    for (int i = 1; i < sheet.getLastRowNum(); i++) {
+    for (int i = 1; i <= sheet.getLastRowNum(); i++) {
       final Player player = extractPlayerFromRow(sheet.getRow(i));
+      if (player == null) {
+        break;
+      }
       log.debug("Reading row {}i : {}", i, player);
       allPlayers.add(player);
     }

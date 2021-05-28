@@ -35,6 +35,10 @@ public abstract class BaseDivideAlgorithm implements DivideAlgorithm {
     return answer;
   }
 
+  public static double getTotalStatsOfOneSquad(List<Player> players) {
+    return players.stream().mapToDouble(Player::getOverallStats).sum();
+  }
+
 
   /**
    * shuffle players of the position in two squad

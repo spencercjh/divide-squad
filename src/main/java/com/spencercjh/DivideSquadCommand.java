@@ -48,6 +48,10 @@ public class DivideSquadCommand implements Runnable {
   @Option(names = {"-s", "--sheet"}, description = "Sheet Index (begin from 0, default value is 0)", defaultValue = "0")
   private Integer sheetIndex;
 
+  @SuppressWarnings("unused")
+  @Option(names = {"-l", "--loss"}, description = "Balance the difference in stats between the two teams. NOTICE, It's an experimental feature.")
+  private boolean needLossCompensation;
+
   public static void main(String[] args) {
     PicocliRunner.run(DivideSquadCommand.class, args);
   }
@@ -55,9 +59,10 @@ public class DivideSquadCommand implements Runnable {
   @SneakyThrows
   @Override
   public void run() {
+
     final List<Player> allPlayers = poiService.getAllPlayers(filePath, sheetIndex);
     final List<List<Player>> playersInDifferentPositions = squadService.groupPlayersByPositions(allPlayers);
-    final SquadSetResult squadSetResult = squadService.divideSquad(allPlayers, playersInDifferentPositions);
+    final SquadSetResult squadSetResult = squadService.divideSquad(allPlayers, playersInDifferentPositions,needLossCompensation);
     output(squadSetResult.sortPlayersInSquad());
   }
 

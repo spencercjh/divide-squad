@@ -1,3 +1,6 @@
 micronaut:
   application:
     name: divideSquad
+app:
+  compensation-for-loss: false
+
