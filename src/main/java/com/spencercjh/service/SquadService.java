@@ -1,10 +1,10 @@
 package com.spencercjh.service;
 
 import com.google.common.collect.Lists;
+import com.spencercjh.algorithm.DivideAlgorithm;
 import com.spencercjh.model.Player;
 import com.spencercjh.model.Position;
 import com.spencercjh.model.SquadSetResult;
-import com.spencercjh.algorithm.DivideAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
@@ -29,6 +29,10 @@ public class SquadService {
     // remove the last overall
     for (int i = 0; i < Position.values().length - 1; i++) {
       final List<Player> playersInDifferentPosition = playersInDifferentPositions.get(i);
+      if (playersInDifferentPosition.isEmpty()) {
+        log.warn("There are no players in {}.", Position.values()[i]);
+        continue;
+      }
       final Position position = Position.values()[i];
       final List<List<Player>> dividedPlayers = divideAlgorithm.divide(playersInDifferentPosition, position);
       boolean result = alphaSet.addAll(dividedPlayers.get(0)) && bravoSet.addAll(dividedPlayers.get(1));
