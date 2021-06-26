@@ -18,7 +18,7 @@ public interface DivideAlgorithm {
    * @param position position enum
    * @return round down stats
    */
-  static int getStats(Player player, Position position) {
+  static double getStats(Player player, Position position) {
     switch (position) {
       case STRIKER:
         return player.getStrikerStats();
@@ -31,7 +31,7 @@ public interface DivideAlgorithm {
       case GOALKEEPER:
         return player.getGoalkeeperStats();
       case OVERALL:
-        return (int) ((player.getOverallStats() + 1) / 2);
+        return ((player.getOverallStats() + 1.0) / 2.0);
       default:
         throw new RuntimeException();
     }

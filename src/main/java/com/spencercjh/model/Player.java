@@ -25,31 +25,31 @@ public class Player {
   @Max(value = 10L)
   @Min(value = 0L)
   @NotNull
-  private int strikerStats;
+  private double strikerStats;
   @Max(value = 10L)
   @Min(value = 0L)
   @NotNull
-  private int middleFieldStats;
+  private double middleFieldStats;
   @Max(value = 10L)
   @Min(value = 0L)
   @NotNull
-  private int sideStats;
+  private double sideStats;
   @Max(value = 10L)
   @Min(value = 0L)
   @NotNull
-  private int halfbackStats;
+  private double halfbackStats;
   @Max(value = 10L)
   @Min(value = 0L)
   @NotNull
-  private int goalkeeperStats;
+  private double goalkeeperStats;
   /**
    * sum of stats / non-zero item count
    */
   private double overallStats;
 
   public Position position() {
-    int[] stats = new int[]{strikerStats, middleFieldStats, sideStats, halfbackStats, goalkeeperStats};
-    int max = Integer.MIN_VALUE;
+    double[] stats = new double[]{strikerStats, middleFieldStats, sideStats, halfbackStats, goalkeeperStats};
+    double max = Double.MIN_VALUE;
     int ans = -1;
     for (int i = 0; i < stats.length; i++) {
       if (stats[i] > max) {

@@ -62,7 +62,7 @@ public class DivideSquadCommand implements Runnable {
 
     final List<Player> allPlayers = poiService.getAllPlayers(filePath, sheetIndex);
     final List<List<Player>> playersInDifferentPositions = squadService.groupPlayersByPositions(allPlayers);
-    final SquadSetResult squadSetResult = squadService.divideSquad(allPlayers, playersInDifferentPositions,needLossCompensation);
+    final SquadSetResult squadSetResult = squadService.divideSquad(allPlayers, playersInDifferentPositions, needLossCompensation);
     output(squadSetResult.sortPlayersInSquad());
   }
 
@@ -71,7 +71,7 @@ public class DivideSquadCommand implements Runnable {
       final double sum = squad.stream().mapToDouble(Player::getOverallStats).sum();
       System.out.printf("%s Squad: %d players, total stats: %d, average stats: %f%n", name, squad.size(), ((int) sum),
         sum / squad.size());
-      squad.forEach(player -> System.out.println(player.getName() + " " + player.getOverallStats()));
+      squad.forEach(player -> System.out.println(player.getName() + " " + player.position() + "\t\t" + player.getOverallStats()));
     });
   }
 

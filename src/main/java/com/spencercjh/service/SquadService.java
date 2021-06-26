@@ -6,7 +6,6 @@ import com.spencercjh.algorithm.DivideAlgorithm;
 import com.spencercjh.model.Player;
 import com.spencercjh.model.Position;
 import com.spencercjh.model.SquadSetResult;
-import io.micronaut.context.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
@@ -43,6 +42,7 @@ public class SquadService {
       double statsA = BaseDivideAlgorithm.getTotalStatsOfOneSquad(dividedPlayers.get(0));
       double statsB = BaseDivideAlgorithm.getTotalStatsOfOneSquad(dividedPlayers.get(1));
       boolean result = false;
+      // TODO support position-ignored mode
       if (!needLossCompensation) {
         result = alphaSet.addAll(dividedPlayers.get(0)) && bravoSet.addAll(dividedPlayers.get(1));
       } else {
@@ -75,7 +75,7 @@ public class SquadService {
     }
     // TODO: Multi Position DeDuplication
     if (alphaSet.size() + bravoSet.size() != allPlayers.size()) {
-      log.error("Failed when dividing, inconsistent totals: {} + {} != {}", alphaSet.size(), bravoSet.size(),
+      log.error("Failed when dividing, inconsistent totals: {} + {} != {}, There may be duplicate positions", alphaSet.size(), bravoSet.size(),
         allPlayers.size());
       throw new RuntimeException();
     }

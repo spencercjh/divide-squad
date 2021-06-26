@@ -29,7 +29,7 @@ public class EquallyDivideAlgorithm extends BaseDivideAlgorithm {
     int sum = 0;
     for (int i = 1; i < squadPlayers.length; i++) {
       final Player player = players.get(i - 1);
-      squadPlayers[i] = new SquadPlayer(i, getStats(player, position), false);
+      squadPlayers[i] = new SquadPlayer(i, (int) (getStats(player, position) * 10), false);
       sum += squadPlayers[i].getStats();
     }
     final int average = sum / 2;

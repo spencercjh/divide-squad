@@ -65,12 +65,12 @@ public class PoiService {
       return null;
     }
     try {
-      final int strikerStats = (int) row.getCell(STRIKER_STATS.getIndex()).getNumericCellValue();
-      final int middleFieldStats = (int) row.getCell(MIDDLE_FIELD_STATS.getIndex()).getNumericCellValue();
-      final int sideStats = (int) row.getCell(SIDE_STATS.getIndex()).getNumericCellValue();
-      final int halfbackStats = (int) row.getCell(HALFBACK_STATS.getIndex()).getNumericCellValue();
-      final int goalkeeperStats = (int) row.getCell(GOALKEEPER_STATS.getIndex()).getNumericCellValue();
-      final int[] stats = new int[]{strikerStats, middleFieldStats, sideStats, halfbackStats, goalkeeperStats};
+      final double strikerStats = row.getCell(STRIKER_STATS.getIndex()).getNumericCellValue();
+      final double middleFieldStats = row.getCell(MIDDLE_FIELD_STATS.getIndex()).getNumericCellValue();
+      final double sideStats = row.getCell(SIDE_STATS.getIndex()).getNumericCellValue();
+      final double halfbackStats = row.getCell(HALFBACK_STATS.getIndex()).getNumericCellValue();
+      final double goalkeeperStats = row.getCell(GOALKEEPER_STATS.getIndex()).getNumericCellValue();
+      final double[] stats = new double[]{strikerStats, middleFieldStats, sideStats, halfbackStats, goalkeeperStats};
       return Player.builder()
         .name(row.getCell(NAME.getIndex()).getStringCellValue())
         .strikerStats(strikerStats)
